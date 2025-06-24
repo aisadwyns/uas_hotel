@@ -40,8 +40,6 @@ public class HotelUserDetails implements UserDetails {
 
     }
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
