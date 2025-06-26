@@ -1,20 +1,37 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
+import '../models/login_request.dart';
+import '../models/user.dart';
+import '../models/jwt_response.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://localhost:8080/api/v1/auth';
-
-  static Future<bool> login(String email, String password) async {
+  Future<JwtResponse?> login(LoginRequest request) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'),
+      Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode(request.toJson()),
     );
 
     if (response.statusCode == 200) {
-      // Simpan token jika backend Anda mengembalikannya
+      return JwtResponse.fromJson(jsonDecode(response.body));
+    } else {
+      print('Login failed: ${response.statusCode} - ${response.body}');
+      return null;
+    }
+  }
+
+  Future<bool> register(User user) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/register-user'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(user.toJson()),
+    );
+
+    if (response.statusCode == 200) {
       return true;
     } else {
+      print('Register failed: ${response.statusCode} - ${response.body}');
       return false;
     }
   }

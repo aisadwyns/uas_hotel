@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 30),
           // Featured Hotels
           const Text(
-            'Featured Hotels',
+            'Featured Hotel',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,

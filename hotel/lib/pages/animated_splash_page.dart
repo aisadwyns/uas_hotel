@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../models/login_request.dart';
+import '../services/auth_service.dart';
+import '../models/user.dart';
 
 class AnimatedSplashPage extends StatefulWidget {
   const AnimatedSplashPage({Key? key}) : super(key: key);
@@ -9,6 +12,127 @@ class AnimatedSplashPage extends StatefulWidget {
 
 class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     with TickerProviderStateMixin {
+  // State untuk menampilkan login / register
+  bool _showLogin = false;
+  bool _showRegister = false;
+  bool _isAnimating = false;
+  bool _agreedToTerms = false;
+  bool _obscurePassword = true;
+
+  // Controller input login
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Controller input registrasi
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Fungsi login
+  void _login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email dan password harus diisi')),
+      );
+      return;
+    }
+
+    final loginRequest = LoginRequest(email: email, password: password);
+
+    try {
+      final jwtResponse = await AuthService().login(loginRequest);
+
+      if (jwtResponse != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login gagal, periksa email dan password'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  // Fungsi register
+  void _register() async {
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (firstName.isEmpty ||
+        lastName.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Semua field harus diisi')));
+      return;
+    }
+
+    User newUser = User(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+    );
+
+    try {
+      bool success = await AuthService().register(newUser);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+        );
+        // Tampilkan login page atau navigasi ke login
+        _showLoginPage();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi gagal, coba lagi.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  // Contoh fungsi switch halaman (harus ada implementasi _showLoginPage dan _showRegisterPage)
+  void _showLoginPage() {
+    setState(() {
+      _showLogin = true;
+      _showRegister = false;
+    });
+  }
+
+  void _showRegisterPage() {
+    setState(() {
+      _showLogin = false;
+      _showRegister = true;
+    });
+  }
+
   late AnimationController _slideController;
   late AnimationController _fadeController;
   late Animation<Offset> _slideAnimation;
@@ -16,13 +140,18 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _splashSlideAnimation;
 
-  bool _showLogin = false;
-  bool _showRegister = false;
-  bool _isAnimating = false;
-
   @override
   void initState() {
     super.initState();
+
+    @override
+    void dispose() {
+      emailController.dispose();
+      passwordController.dispose();
+      _slideController.dispose();
+      _fadeController.dispose();
+      super.dispose();
+    }
 
     // Controller untuk animasi slide up
     _slideController = AnimationController(
@@ -95,43 +224,43 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     });
   }
 
-  void _showRegisterPage() async {
-    setState(() {
-      _isAnimating = true;
-    });
+  // void _showRegisterPage() async {
+  //   setState(() {
+  //     _isAnimating = true;
+  //   });
 
-    await _slideController.reverse();
+  //   await _slideController.reverse();
 
-    setState(() {
-      _showLogin = false;
-      _showRegister = true;
-    });
+  //   setState(() {
+  //     _showLogin = false;
+  //     _showRegister = true;
+  //   });
 
-    await _slideController.forward();
+  //   await _slideController.forward();
 
-    setState(() {
-      _isAnimating = false;
-    });
-  }
+  //   setState(() {
+  //     _isAnimating = false;
+  //   });
+  // }
 
-  void _showLoginPage() async {
-    setState(() {
-      _isAnimating = true;
-    });
+  // void _showLoginPage() async {
+  //   setState(() {
+  //     _isAnimating = true;
+  //   });
 
-    await _slideController.reverse();
+  //   await _slideController.reverse();
 
-    setState(() {
-      _showRegister = false;
-      _showLogin = true;
-    });
+  //   setState(() {
+  //     _showRegister = false;
+  //     _showLogin = true;
+  //   });
 
-    await _slideController.forward();
+  //   await _slideController.forward();
 
-    setState(() {
-      _isAnimating = false;
-    });
-  }
+  //   setState(() {
+  //     _isAnimating = false;
+  //   });
+  // }
 
   void _hideRegister() async {
     setState(() {
@@ -147,12 +276,12 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     });
   }
 
-  @override
-  void dispose() {
-    _slideController.dispose();
-    _fadeController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _slideController.dispose();
+  //   _fadeController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +476,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     );
   }
 
+  //login
   Widget _buildLoginPopup() {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -430,6 +560,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
 
                     // Email Field
                     TextField(
+                      controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -460,7 +591,8 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
 
                     // Password Field
                     TextField(
-                      obscureText: true,
+                      controller: passwordController,
+                      obscureText: _obscurePassword,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -472,10 +604,19 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                           color: Color(0xFFFFCD74),
                           size: 20,
                         ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 20,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.white.withOpacity(0.7),
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.1),
@@ -489,7 +630,6 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 12),
 
                     // Forgot Password
@@ -514,9 +654,8 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        },
+                        onPressed:
+                            _login, // <-- panggil fungsi login yang kamu buat
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFFCD74),
                           foregroundColor: const Color(0xFF0F0F23),
@@ -572,6 +711,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     );
   }
 
+  //register
   Widget _buildRegisterPopup() {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -653,16 +793,17 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
 
                     const SizedBox(height: 32),
 
-                    // Full Name Field
+                    // First Name
                     TextField(
+                      controller: _firstNameController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Full Name',
+                        labelText: 'First Name',
                         labelStyle: TextStyle(
                           color: Colors.white.withOpacity(0.7),
                         ),
                         prefixIcon: const Icon(
-                          Icons.person_outlined,
+                          Icons.person_outline,
                           color: Color(0xFFFFCD74),
                           size: 20,
                         ),
@@ -678,11 +819,39 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 16),
 
-                    // Email Field
+                    // Last Name
                     TextField(
+                      controller: _lastNameController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'Last Name',
+                        labelStyle: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.person_outline,
+                          color: Color(0xFFFFCD74),
+                          size: 20,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.1),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Email
+                    TextField(
+                      controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -707,41 +876,11 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 16),
 
-                    // Phone Number Field
                     TextField(
-                      keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number',
-                        labelStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.phone_outlined,
-                          color: Color(0xFFFFCD74),
-                          size: 20,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Password Field
-                    TextField(
-                      obscureText: true,
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -753,44 +892,19 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                           color: Color(0xFFFFCD74),
                           size: 20,
                         ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 20,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Confirm Password Field
-                    TextField(
-                      obscureText: true,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        labelStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.lock_outlined,
-                          color: Color(0xFFFFCD74),
-                          size: 20,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 20,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.white.withOpacity(0.7),
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.1),
@@ -812,8 +926,12 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Checkbox(
-                          value: true,
-                          onChanged: (value) {},
+                          value: _agreedToTerms,
+                          onChanged: (value) {
+                            setState(() {
+                              _agreedToTerms = value ?? false;
+                            });
+                          },
                           activeColor: const Color(0xFFFFCD74),
                           checkColor: const Color(0xFF0F0F23),
                         ),
@@ -850,7 +968,6 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
 
                     // Register Button
@@ -859,7 +976,17 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/home');
+                          if (_agreedToTerms) {
+                            _register();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Anda harus menyetujui syarat & ketentuan',
+                                ),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFFCD74),

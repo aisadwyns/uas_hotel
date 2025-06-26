@@ -159,7 +159,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                     Icon(Icons.flight_takeoff, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     const Text(
-                      'ngehotelyuk!',
+                      'ngehotelyukkk!',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -188,7 +188,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                     const SizedBox(height: 16),
                     // Subtitle
                     const Text(
-                      'Temukan tempat wisata dan hotel terbaik\nyang kamu inginkan bersamaku.',
+                      'Temukan tempat wisata dan hotel terbaik\nyang kamu inginkan bersamaku loveyou.',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,
