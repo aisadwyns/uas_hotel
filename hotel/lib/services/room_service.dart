@@ -1,40 +1,67 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/room.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/room_model.dart';
+import '../config/api_config.dart';
 
 class RoomService {
-  static const String baseUrl = 'http://localhost:8080/api/v1/room';
+  /// Ambil semua kamar dari backend
+  Future<List<Room>> getAllRooms() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
 
-  static Future<List<Room>> fetchRooms() async {
-    final response = await http.get(Uri.parse('$baseUrl/all'));
+    final url = Uri.parse('${ApiConfig.baseUrl}/rooms/all-rooms');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      List<dynamic> jsonData = jsonDecode(response.body);
-      return jsonData.map((item) => Room.fromJson(item)).toList();
+      final List<dynamic> roomsJson = json.decode(response.body);
+      return roomsJson.map((json) => Room.fromJson(json)).toList();
     } else {
-      return [];
+      throw Exception(
+        'Gagal memuat data kamar, status code: ${response.statusCode}',
+      );
     }
   }
-}
 
-class Room {
-  final int id;
-  final String name;
-  // Add other fields as needed
+  /// Ambil 1 kamar berdasarkan ID
+  Future<Room> getRoomById(int id) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}/rooms/room/$id');
+    final response = await http.get(url);
 
-  Room({
-    required this.id,
-    required this.name,
-    // Add other fields as required
-  });
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> roomJson = json.decode(response.body);
+      return Room.fromJson(roomJson);
+    } else {
+      throw Exception('Gagal mengambil detail kamar');
+    }
+  }
 
-  // Add this factory constructor for JSON deserialization
-  factory Room.fromJson(Map<String, dynamic> json) {
-    // Replace the following with your actual Room fields
-    return Room(
-      id: json['id'],
-      name: json['name'],
-      // ... other fields
-    );
+  /// Ambil semua jenis kamar (tipe kamar) dari backend
+  Future<List<String>> getRoomTypes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/rooms/room/types');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> typesJson = json.decode(response.body);
+      return typesJson.cast<String>();
+    } else {
+      throw Exception(
+        'Gagal memuat tipe kamar, status code: ${response.statusCode}',
+      );
+    }
   }
 }

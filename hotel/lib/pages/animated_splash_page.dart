@@ -46,34 +46,105 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email dan password harus diisi')),
+      _showAlertDialog(
+        title: 'Input Kosong',
+        message: 'Email dan password harus diisi.',
+        icon: Icons.warning_amber_outlined,
+        color: Colors.orange,
       );
       return;
     }
 
     final loginRequest = LoginRequest(email: email, password: password);
 
+    // Tampilkan loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFFFCD74)),
+          ),
+    );
+
     try {
       final jwtResponse = await AuthService().login(loginRequest);
 
+      Navigator.of(context).pop(); // Tutup loading dialog
+
       if (jwtResponse != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Login berhasil!'),
+            backgroundColor: const Color(0xFF4CAF50), // Hijau sukses
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 800));
         Navigator.pushReplacementNamed(context, '/home');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login gagal, periksa email dan password'),
-          ),
+        _showAlertDialog(
+          title: 'Login Gagal',
+          message: 'Periksa kembali email dan password kamu.',
+          icon: Icons.error_outline,
+          color: Colors.redAccent,
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      Navigator.of(context).pop(); // Tutup loading dialog kalau error
+
+      _showAlertDialog(
+        title: 'Terjadi Kesalahan',
+        message: 'Gagal terhubung ke server: $e',
+        icon: Icons.cloud_off,
+        color: Colors.grey,
+      );
     }
   }
 
-  // Fungsi register
+  //style alert
+  void _showAlertDialog({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color color,
+  }) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: const Color(0xFF222222),
+            title: Row(
+              children: [
+                Icon(icon, color: color),
+                const SizedBox(width: 10),
+                Text(title, style: const TextStyle(color: Colors.white)),
+              ],
+            ),
+            content: Text(
+              message,
+              style: TextStyle(color: Colors.white.withOpacity(0.8)),
+            ),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: color),
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Tutup'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  //fungsi register
   void _register() async {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
@@ -84,9 +155,12 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
         lastName.isEmpty ||
         email.isEmpty ||
         password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Semua field harus diisi')));
+      _showAlertDialog(
+        title: 'Field Kosong',
+        message: 'Semua kolom wajib diisi.',
+        icon: Icons.warning_amber_outlined,
+        color: Colors.orange,
+      );
       return;
     }
 
@@ -101,20 +175,28 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
       bool success = await AuthService().register(newUser);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+        _showAlertDialog(
+          title: 'Registrasi Berhasil',
+          message: 'Akun berhasil dibuat. Silakan login sekarang.',
+          icon: Icons.check_circle_outline,
+          color: Colors.greenAccent,
         );
-        // Tampilkan login page atau navigasi ke login
         _showLoginPage();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registrasi gagal, coba lagi.')),
+        _showAlertDialog(
+          title: 'Registrasi Gagal',
+          message: 'Email mungkin sudah digunakan. Coba lagi.',
+          icon: Icons.error_outline,
+          color: Colors.redAccent,
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _showAlertDialog(
+        title: 'Terjadi Kesalahan',
+        message: 'Tidak dapat menghubungi server: $e',
+        icon: Icons.cloud_off,
+        color: Colors.grey,
+      );
     }
   }
 
@@ -382,7 +464,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                     Icon(Icons.flight_takeoff, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     const Text(
-                      'ngehotelyuk!',
+                      'ChillPoint Hotel',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -399,7 +481,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                   children: [
                     // Main Title
                     const Text(
-                      'Temukan\nHotel Terbaik\nDi Indonesia',
+                      'Selamat Datang\nDi Hotel Kami',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 36,
@@ -411,7 +493,7 @@ class _AnimatedSplashPageState extends State<AnimatedSplashPage>
                     const SizedBox(height: 16),
                     // Subtitle
                     const Text(
-                      'Temukan tempat wisata dan hotel terbaik\nyang kamu inginkan bersamaku.',
+                      'Pesan kamar nyaman dan fasilitas terbaik\nuntuk pengalaman menginap yang tak terlupakan.',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,

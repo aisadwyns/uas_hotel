@@ -4,6 +4,7 @@ import '../config/api_config.dart';
 import '../models/login_request.dart';
 import '../models/user.dart';
 import '../models/jwt_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   Future<JwtResponse?> login(LoginRequest request) async {
@@ -14,7 +15,12 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      return JwtResponse.fromJson(jsonDecode(response.body));
+      final jwtResponse = JwtResponse.fromJson(jsonDecode(response.body));
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access_token', jwtResponse.token);
+
+      return jwtResponse;
     } else {
       print('Login failed: ${response.statusCode} - ${response.body}');
       return null;
