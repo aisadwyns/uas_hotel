@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hotel/pages/profil_page.dart';
 import 'dart:convert';
 import '../models/room_model.dart';
 import '../services/room_service.dart';
 import '../pages/hotel_search_widget.dart';
+import '../pages/booking_page.dart'; // Import halaman booking
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -207,19 +209,9 @@ class _HomePageState extends State<HomePage> {
               roomTypesFromBackend: _roomTypes,
             );
       case 2:
-        return const Center(
-          child: Text(
-            'Booking Page',
-            style: TextStyle(color: Colors.white, fontSize: 24),
-          ),
-        );
+        return const BookingsPage(); // Sudah dipindah ke file booking_page.dart
       case 3:
-        return const Center(
-          child: Text(
-            'Profile Page',
-            style: TextStyle(color: Colors.white, fontSize: 24),
-          ),
-        );
+        return const ProfilePage(); // Sudah dipindah ke file profil_page.dart
       default:
         return const Center(
           child: Text('Page not found', style: TextStyle(color: Colors.white)),
@@ -797,7 +789,7 @@ class _HomePageState extends State<HomePage> {
                         // DETAIL KAMAR (Putih penuh)
                         Container(
                           width: double.infinity,
-                          color: const Color.fromARGB(255, 202, 200, 200),
+                          color: const Color(0xFF2D2D2D),
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,7 +798,7 @@ class _HomePageState extends State<HomePage> {
                                 "Detail Kamar",
                                 style: TextStyle(
                                   fontSize: 24,
-                                  color: Color(0xFF2D2D2D),
+                                  color: Color(0xFFFFCB74),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -815,7 +807,7 @@ class _HomePageState extends State<HomePage> {
                                 "Tipe Kamar: ${room.roomType}",
                                 style: const TextStyle(
                                   fontSize: 18,
-                                  color: Color(0xFF2D2D2D),
+                                  color: Color(0xFFFFFFFF),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -823,7 +815,7 @@ class _HomePageState extends State<HomePage> {
                                 "Harga: Rp ${room.roomPrice.toStringAsFixed(0)} per malam",
                                 style: const TextStyle(
                                   fontSize: 18,
-                                  color: Color(0xFF2D2D2D),
+                                  color: Color(0xFFFFFFFF),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -841,7 +833,7 @@ class _HomePageState extends State<HomePage> {
                                 "Kamar ini dilengkapi dengan fasilitas modern dan suasana nyaman. Cocok untuk perjalanan bisnis maupun liburan keluarga.",
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Color(0xFF2D2D2D),
+                                  color: Color(0xFFFFFFFF),
                                 ),
                               ),
 
@@ -850,7 +842,7 @@ class _HomePageState extends State<HomePage> {
                                 "Fasilitas",
                                 style: TextStyle(
                                   fontSize: 22,
-                                  color: Color(0xFF2D2D2D),
+                                  color: Color(0xFFFFCB74),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -889,41 +881,337 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 24),
 
+                              const Text(
+                                "Booking Form",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  color: Color(0xFFFFCB74),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime.now().add(
+                                      Duration(days: 365),
+                                    ),
+                                  );
+                                  // Handle picked date
+                                },
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Tanggal Check In',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime.now().add(
+                                      Duration(days: 365),
+                                    ),
+                                  );
+                                  // Handle picked date
+                                },
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Tanggal Check Out',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.name,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Nama Lengkap',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.person_outline,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.email_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Jumlah Tamu Dewasa',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.people_outline,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Jumlah Tamu Anak',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.child_care_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.number,
+                                readOnly: true,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Total Tamu',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.people,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.text,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Kode Konfirmasi',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.confirmation_number_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TextField(
+                                keyboardType: TextInputType.text,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'ID Kamar',
+                                  labelStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.hotel_outlined,
+                                    color: Color(0xFFFFCD74),
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                              ),
                               const SizedBox(height: 24),
                               SizedBox(
                                 width: double.infinity,
-                                height: 60,
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        room.isBooked
-                                            ? Colors.grey
-                                            : Colors.orange,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                  onPressed:
-                                      room.isBooked
-                                          ? null
-                                          : () {
-                                            // TODO: Implement booking functionality
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  "Fitur booking akan segera tersedia",
-                                                ),
+                                  onPressed: () {
+                                    // Show success notification
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(width: 12),
+                                            Text(
+                                              'Booking berhasil!',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                            );
-                                          },
-                                  child: Text(
-                                    room.isBooked
-                                        ? "Sudah Terbook"
-                                        : "Book Now",
-                                    style: const TextStyle(fontSize: 22),
+                                            ),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        duration: Duration(seconds: 2),
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+
+                                    // Navigate to booking tab after short delay
+                                    Future.delayed(
+                                      Duration(milliseconds: 800),
+                                      () {
+                                        setState(() {
+                                          _currentIndex =
+                                              2; // Index 2 untuk tab Booking
+                                        });
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFFCB74),
+                                    foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 3,
+                                  ),
+                                  child: const Text(
+                                    'BOOK NOW',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                    ),
                                   ),
                                 ),
                               ),

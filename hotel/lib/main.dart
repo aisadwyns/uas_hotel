@@ -78,7 +78,22 @@ class LuxeStayApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomePage(),
+        '/booking':
+            (context) => const Booking(), // Ganti dengan halaman booking
       },
+    );
+  }
+}
+
+// Dummy MyBooking page to fix the error
+class Booking extends StatelessWidget {
+  const Booking({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Booking')),
+      body: const Center(child: Text('Booking Page')),
     );
   }
 }

@@ -1,453 +1,340 @@
 import 'package:flutter/material.dart';
-import '../models/room.dart';
+import 'package:dotted_line/dotted_line.dart';
 
-class BookingPage extends StatefulWidget {
-  final Room room;
-
-  const BookingPage({Key? key, required this.room}) : super(key: key);
+class BookingsPage extends StatefulWidget {
+  const BookingsPage({Key? key}) : super(key: key);
 
   @override
-  State<BookingPage> createState() => _BookingPageState();
+  State<BookingsPage> createState() => _BookingsPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
-  DateTime? _checkInDate;
-  DateTime? _checkOutDate;
-  int _guests = 1;
-  int _nights = 0;
-  double _totalPrice = 0;
-
+class _BookingsPageState extends State<BookingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F23),
+      backgroundColor: const Color(0xFF2D2D2D),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF2D2D2D),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Kembali ke halaman sebelumnya
+          },
         ),
-        title: const Text('Book Room', style: TextStyle(color: Colors.white)),
+        title: Text(
+          'My Bookings',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Room Summary
+            // Booking Card
             Container(
-              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF4A90E2).withOpacity(0.3),
-                    const Color(0xFF007AFF).withOpacity(0.2),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF4A90E2), Color(0xFF007AFF)],
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.hotel,
-                      color: Colors.white,
-                      size: 32,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.room.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.room.location,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '\${widget.room.price.toInt()}/night',
-                          style: const TextStyle(
-                            color: Color(0xFFFFD700),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            // Date Selection
-            const Text(
-              'Select Dates',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDateCard(
-                    'Check-in',
-                    _checkInDate,
-                    () => _selectDate(true),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDateCard(
-                    'Check-out',
-                    _checkOutDate,
-                    () => _selectDate(false),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            // Guests Selection
-            const Text(
-              'Guests',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Number of guests',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
                   ),
-                  Row(
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(
+                      0.6,
+                    ), // Tambah opacity kalau mau lebih gelap
+                    BlendMode.darken,
+                  ),
+
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: _guests > 1 ? () => _updateGuests(-1) : null,
-                        icon: Icon(
-                          Icons.remove_circle_outline,
-                          color:
-                              _guests > 1
-                                  ? const Color(0xFFFFD700)
-                                  : Colors.white.withOpacity(0.3),
-                        ),
-                      ),
+                      // Date Section
                       Container(
-                        width: 40,
-                        alignment: Alignment.center,
-                        child: Text(
-                          _guests.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'March',
+                              style: TextStyle(
+                                color: Color(0xFFFFCB74),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '23',
+                              style: TextStyle(
+                                color: Color(0xFFFFCB74),
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Monday',
+                              style: TextStyle(
+                                color: Color(0xFFFFCB74),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        onPressed:
-                            _guests < widget.room.maxGuests
-                                ? () => _updateGuests(1)
-                                : null,
-                        icon: Icon(
-                          Icons.add_circle_outline,
-                          color:
-                              _guests < widget.room.maxGuests
-                                  ? const Color(0xFFFFD700)
-                                  : Colors.white.withOpacity(0.3),
+
+                      SizedBox(width: 16),
+
+                      // Dotted Line Separator
+                      Container(
+                        height: 100,
+                        child: DottedLine(
+                          direction: Axis.vertical,
+                          dashColor: Colors.white,
+                          lineLength: double.infinity,
+                          lineThickness: 3.0,
+                          dashLength: 5.0,
+                          dashGapLength: 5.0,
+                        ),
+                      ),
+
+                      SizedBox(width: 16),
+
+                      // Booking Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '2 Nights - 2 Guests',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'At Raddison Blue',
+                              style: TextStyle(
+                                color: Color(0xFFFFCB74),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Booking ID',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      '8237920',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 24),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Date of checkout',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      '26 Aug 2022',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            // Price Summary
-            if (_nights > 0) ...[
-              const Text(
-                'Price Summary',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '\${widget.room.price.toInt()} x $_nights nights',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          '\${(widget.room.price * _nights).toInt()}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    const Divider(color: Colors.white24),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '\${_totalPrice.toInt()}',
-                          style: const TextStyle(
-                            color: Color(0xFFFFD700),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-            ],
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F0F23),
-          border: Border(top: BorderSide(color: Colors.white.withOpacity(0.1))),
-        ),
-        child: SafeArea(
-          child: SizedBox(
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _nights > 0 ? _confirmBooking : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _nights > 0
-                        ? const Color(0xFFFFD700)
-                        : Colors.white.withOpacity(0.3),
-                foregroundColor: const Color(0xFF0F0F23),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Text(
-                _nights > 0
-                    ? 'Confirm Booking - \${_totalPrice.toInt()}'
-                    : 'Select Dates',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildDateCard(String title, DateTime? date, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              date != null
-                  ? '${date.day}/${date.month}/${date.year}'
-                  : 'Select date',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            SizedBox(height: 20),
 
-  void _selectDate(bool isCheckIn) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFFFD700),
-              surface: Color(0xFF0F0F23),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        if (isCheckIn) {
-          _checkInDate = picked;
-          if (_checkOutDate != null && _checkOutDate!.isBefore(picked)) {
-            _checkOutDate = null;
-          }
-        } else {
-          _checkOutDate = picked;
-        }
-        _calculatePrice();
-      });
-    }
-  }
-
-  void _updateGuests(int change) {
-    setState(() {
-      _guests += change;
-    });
-  }
-
-  void _calculatePrice() {
-    if (_checkInDate != null && _checkOutDate != null) {
-      _nights = _checkOutDate!.difference(_checkInDate!).inDays;
-      _totalPrice = widget.room.price * _nights;
-    } else {
-      _nights = 0;
-      _totalPrice = 0;
-    }
-  }
-
-  void _confirmBooking() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1A1A3A),
-            title: const Text(
-              'Booking Confirmed!',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Action Buttons
+            Row(
               children: [
-                Text(
-                  'Your booking has been confirmed.',
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      // Cancel booking action
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              backgroundColor: Color(0xFF2D2D2D),
+                              title: Text(
+                                'Cancel Booking',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              content: Text(
+                                'Are you sure you want to cancel this booking?',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'No',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Booking cancelled successfully',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Yes',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.white),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'CANCEL BOOKING',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Check-in: ${_checkInDate!.day}/${_checkInDate!.month}/${_checkInDate!.year}',
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  'Check-out: ${_checkOutDate!.day}/${_checkOutDate!.month}/${_checkOutDate!.year}',
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  'Guests: $_guests',
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  'Total: \${_totalPrice.toInt()}',
-                  style: const TextStyle(
-                    color: Color(0xFFFFD700),
-                    fontWeight: FontWeight.bold,
+                SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Show QR code
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              backgroundColor: Color(0xFF2D2D2D),
+                              title: Text(
+                                'QR Code',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              content: Container(
+                                width: 200,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.qr_code,
+                                    size: 150,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'Close',
+                                    style: TextStyle(color: Color(0xFFFFCB74)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFFFCB74),
+                      foregroundColor: Colors.black,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'QR',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Color(0xFFFFD700)),
-                ),
-              ),
-            ],
-          ),
+          ],
+        ),
+      ),
     );
   }
 }

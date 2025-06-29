@@ -39,7 +39,7 @@ class _HotelSearchWidgetState extends State<HotelSearchWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Color(0xFF2D2D2D),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -133,10 +133,7 @@ class _HotelSearchWidgetState extends State<HotelSearchWidget> {
               },
               child: const Text(
                 "Cari Kamar",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           ),
